@@ -1,0 +1,85 @@
+$max-head-rows: 10 !default;
+$max-side-columns: 10 !default;
+$z-index-base: 10 !default;
+
+table.sticky {
+	border-spacing: 0px !important;
+	border-collapse: separate !important;
+
+	>thead {
+		// header rows
+		@for $i from 1 through $max-head-rows {
+			>tr>th[aria-rowindex="#{$i}"] {
+				position: sticky;
+				top: var(--stickytables-row-#{$i}-top, auto);
+			}
+		}
+
+		// top-left corner, the header and sidebar cross section
+		@for $i from 1 through $max-side-columns {
+			>tr>th[aria-colindex="#{$i}"] {
+				position: sticky;
+				left: var(--stickytables-col-#{$i}-left, auto);
+				z-index: $z-index-base + $max-side-columns - $i;
+			}
+		}
+	}
+
+	>tbody {
+		// sidebar columns
+		@for $i from 1 through $max-side-columns {
+			>tr>th[aria-colindex="#{$i}"] {
+				position: sticky;
+				left: var(--stickytables-col-#{$i}-left, auto);
+			}
+		}
+
+		// sticky rows
+		>tr.sticky {
+			>th {
+				position: sticky;
+				top: var(--stickytables-top, auto);
+				left: auto;
+				z-index: $z-index-base;
+			}
+		}
+	}
+}
+
+// sticky cell contents
+table.sticky {
+	// sticky rows center aligned texts (fullscreen)
+	>tbody>tr.sticky>th>span.sticky {
+		display: block;
+		position: sticky;
+		left: var(--cellpadding-x, 0px);
+		text-align: center;
+		max-width: calc(100vw - (2 * var(--cellpadding-x, 0px)) - var(--scrollbar-size-y, 0px));
+	}
+
+	>thead>tr>th>span.sticky {
+		position: sticky;
+		inset: var(--cellpadding-y, 0px) var(--cellpadding-x, 0px);
+		left: calc(var(--stickytables-left, auto) + var(--cellpadding-x, 0px));
+	}
+
+	>tbody>tr:not(.sticky)>th>span.sticky {
+		position: sticky;
+		inset: var(--cellpadding-y, 0px) var(--cellpadding-x, 0px);
+		top: calc(var(--stickytables-top, auto) + var(--cellpadding-y, 0px));
+	}
+}
+
+@media print {
+	table.sticky {
+		>thead>tr>th {
+			position: static !important;
+		}
+		>tbody>tr>th {
+			position: static !important;
+		}
+		span.sticky {
+			position: static !important;
+		}
+	}
+}
