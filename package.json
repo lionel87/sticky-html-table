@@ -1,5 +1,5 @@
 {
-  "name": "sticky-table",
+  "name": "sticky-html-table",
   "description": "Tools to make large HTML table headers and sidebars to stick on the screen when scrolling.",
   "version": "0.1.0",
   "main": "dist/sticky-table.js",
