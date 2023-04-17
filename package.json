@@ -1,0 +1,20 @@
+{
+  "name": "sticky-table",
+  "description": "Tools to make large HTML table headers and sidebars to stick on the screen when scrolling.",
+  "version": "0.1.0",
+  "main": "dist/sticky-table.js",
+  "type": "module",
+  "author": "László BULIK",
+  "license": "MIT",
+  "scripts": {
+    "start": "node scripts/build.js --watch --serve",
+    "clean": "rimraf dist",
+    "build": "node scripts/build.js --env=production",
+    "watch": "node scripts/build.js --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.17.17",
+    "esbuild-sass-plugin": "^2.8.0",
+    "rimraf": "^5.0.0"
+  }
+}
