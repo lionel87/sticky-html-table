@@ -52,21 +52,21 @@ table.sticky {
 	>tbody>tr.sticky>th>span.sticky {
 		display: block;
 		position: sticky;
-		left: var(--cellpadding-x, 0px);
+		left: var(--padding-left, 0px);
 		text-align: center;
-		max-width: calc(100vw - (2 * var(--cellpadding-x, 0px)) - var(--scrollbar-size-y, 0px));
+		max-width: calc(var(--viewport-width, 100vw) - var(--padding-left, 0px) - var(--padding-right, 0px));
 	}
 
 	>thead>tr>th>span.sticky {
 		position: sticky;
-		inset: var(--cellpadding-y, 0px) var(--cellpadding-x, 0px);
-		left: calc(var(--stickytables-left, auto) + var(--cellpadding-x, 0px));
+		inset: var(--padding-top, 0px) var(--padding-right, 0px) var(--padding-bottom, 0px) var(--padding-left, 0px);
+		left: calc(var(--stickytables-left, auto) + var(--padding-left, 0px));
 	}
 
 	>tbody>tr:not(.sticky)>th>span.sticky {
 		position: sticky;
-		inset: var(--cellpadding-y, 0px) var(--cellpadding-x, 0px);
-		top: calc(var(--stickytables-top, auto) + var(--cellpadding-y, 0px));
+		inset: var(--padding-top, 0px) var(--padding-right, 0px) var(--padding-bottom, 0px) var(--padding-left, 0px);
+		top: calc(var(--stickytables-top, auto) + var(--padding-top, 0px));
 	}
 }
 

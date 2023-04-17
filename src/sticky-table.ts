@@ -113,11 +113,23 @@ export function offsetTopsForSectionsWhenSideContentSticky(table: HTMLTableEleme
 	}
 }
 
-export function addScollbarSizeY() {
+export function addViewportCssVariables() {
 	document.documentElement.style.setProperty(
-		'--scrollbar-size-y',
-		(window.innerWidth - document.documentElement.clientWidth) + 'px'
+		'--viewport-width',
+		document.documentElement.clientWidth + 'px'
 	);
+}
+
+export function addPaddingCssVaraibles(table: HTMLTableElement) {
+	const firstCell = table.querySelector('th');
+	if (!firstCell) return;
+
+	const computedStyle = window.getComputedStyle(firstCell);
+
+	table.style.setProperty('--padding-top', computedStyle?.paddingTop ?? '0px');
+	table.style.setProperty('--padding-right', computedStyle?.paddingRight ?? '0px');
+	table.style.setProperty('--padding-bottom', computedStyle?.paddingBottom ?? '0px');
+	table.style.setProperty('--padding-left', computedStyle?.paddingLeft ?? '0px');
 }
 
 interface InitOptions {
@@ -139,23 +151,26 @@ interface InitOptions {
 	/** Section content wrapped in a sticky box, centered on screen. */
 	stickyWrapSectionsContent?: boolean;
 
-	/** Set and manage --scrollbar-size-y css variable, required by sticky-wrapped section cell centering. */
-	addScrollSizeY?: boolean;
+	/** Set and manage --viewport-width CSS variable on DocumentElement, required by sticky-wrapped section cells. */
+	addViewportWidthVars?: boolean;
+
+	/** Set --padding-{top,right,bottom,left} CSS variables on the table element on load, required by sticky-wrapped cells. */
+	addPaddingVars?: boolean;
 
 	/** Offset sticky table screen top position. */
-	offsetTop?: number | { (): number };
+	offsetTop?: number | { (): number; };
 
 	/** Offset sticky table screen left position. */
-	offsetLeft?: number | { (): number };
+	offsetLeft?: number | { (): number; };
 }
 
 export function init(options: InitOptions = {}) {
 	const tableSelector = options.customSelector ?? 'table.sticky';
 
-	if (options.addScrollSizeY) {
-		window.addEventListener('DOMContentLoaded', addScollbarSizeY);
-		window.addEventListener('load', addScollbarSizeY);
-		window.addEventListener('resize', addScollbarSizeY);
+	if (options.addViewportWidthVars) {
+		window.addEventListener('DOMContentLoaded', addViewportCssVariables);
+		window.addEventListener('load', addViewportCssVariables);
+		window.addEventListener('resize', addViewportCssVariables);
 	}
 
 	window.addEventListener('DOMContentLoaded', () => {
@@ -191,6 +206,9 @@ export function init(options: InitOptions = {}) {
 			}
 			if (options.stickyWrapSectionsContent) {
 				stickyWrapSectionsContent(table);
+			}
+			if (options.addPaddingVars) {
+				addPaddingCssVaraibles(table);
 			}
 		}
 	});

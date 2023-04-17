@@ -1,10 +1,6 @@
 # sticky-table
 
-Tools to make a large HTML table header and sidebar sticky when scrolling.
-
-# Package Status: Work In Progress
-
-Do not use this in production.
+Tools to make large HTML table headers and sidebars to stick on the screen when scrolling.
 
 ## Anatomy of a table
 
@@ -16,13 +12,16 @@ A table consists of
 - optionally multiple sections, where a section has its own single row section header
 - a single table body, or multiple, one for each section
 
-The table header can have multiple rows, and any kind of merged cells.
+The table header can have multiple rows, and any kind of merged cells. Table headers (`<thead>`) only contains `<th>` elements.
 
-The table sidebar can have multiple columns, and any kind of merged cells.
+The table sidebar can have multiple columns, and any kind of merged cells. The `<th>` cells which contained in a `<tbody>` element are considered to be sidebar cells.
 
 A table section header is a single table row usually fully merged and stlyed like the table header.
 
 Sections can be separated into their own `<tbody>` where the first row is the section header, or just left in one big `<tbody>` element.
+
+> Note: The `<tfoot>` element has no role in this implementation, and may break the table if used.
+> Note: The `<colgroup>` element can be used to style the table columns freely.
 
 ## Usage
 
@@ -41,6 +40,13 @@ Sections can be separated into their own `<tbody>` where the first row is the se
     <tr><th>AA</th><th>BB</th><th>CC</th></tr>
   </thead>
   <tbody>
+    <tr class="sticky"><th colspan="3">Block 1</th></tr>
+    <tr><th>1</th><th>11</th><th>111</th></tr>
+    <tr><th>2</th><th>22</th><th>222</th></tr>
+    <tr><th>3</th><th>33</th><th>333</th></tr>
+  </tbody>
+  <tbody>
+    <tr class="sticky"><th colspan="3">Block 2</th></tr>
     <tr><th>1</th><th>11</th><th>111</th></tr>
     <tr><th>2</th><th>22</th><th>222</th></tr>
     <tr><th>3</th><th>33</th><th>333</th></tr>
@@ -51,15 +57,16 @@ Sections can be separated into their own `<tbody>` where the first row is the se
 </script>
 ```
 
-## CSS implementation details
+## CSS implementation notes
 
 For the CSS to work it is required to have `aria-colindex` and `aria-rowindex` attributes on every table cell.
 This helps to properly reference each header row and each sidebar column targeted to be sticky.
+The `addTableCellAriaRowColIndexes(table)` function is responsible to add these aria attributes to each cell when these are missing.
 
 To position each row and column correctly, we use CSS properties that is applied by `addStickyTableCssVariables(table)` function to the table element. This defines each row height and each column width which allows us to have multi-row tall header and multi-column wide sidebar.
 
 Our tables can have sections, usually in a form of the whole table row merged together.
-This package currently provides support for vertically sectioned tables only, with a limitation of equal height rows for the section headers.
+This package currently provides support for sections only in vertical axis direction, with a limitation of equal height rows for the section headers.
 Mark each row element with `sticky` class and the row will always stick below the table header while scrolling down.
 
 ### Classes
@@ -72,62 +79,19 @@ Only a `sticky` class is defined, and does different things when present on diff
 
 > Note: Sticky rows (section headers) can have sticky spans in them. The sticky span makes the content always aligned to screen center.
 
-> TODO: instead of screen width, we should implement `--viewport-width` property. Removes the need of `--scrollbar-size-y`.
-
 ### CSS variables
 
-The following CSS variables used by the table cells:
+The following CSS variables used when we position the cells:
 
-- `--stickytables-row-<i>-top`: Pixel value to offset table header rows.
-- `--stickytables-top`: Pixel value to offset things below the last table header row.
-- `--stickytables-column-<i>-left`: Pixel value to offset table sidebar columns.
-- `--stickytables-left`: Pixel value to offset things next to the last table sidebar column.
-- `--cellpadding-x`: Cell padding on the x axis. Used by sticky `<span class="sticky">` tags in table cells.
-- `--cellpadding-y`: Cell padding on the y axis. Used by sticky `<span class="sticky">` tags in table cells.
-- `--scrollbar-size-y`: Used by the table section header cell(s) containing a `<span class="sticky">`.
+- `--stickytables-row-<i>-top`: To offset table header rows from the top.
+- `--stickytables-column-<i>-left`: To offset table sidebar columns from the left side.
+- `--stickytables-top`: To offset anything below the last table header row.
+- `--stickytables-left`: To offset anything next to the last table sidebar column.
+- `--viewport-width`: Defines the table max visible area. Used when the table section header contains `<span class="sticky">` elements.
+- `--padding-{top,right,bottom,left}`: Cell padding. Used when table cells has `<span class="sticky">` elements.
 
-These variables are generated by the `init` script automatically with the exception of the `--cellpadding-x/y`.
+These variables can be generated with the `init()` call automatically.
 
-> TODO: generate `--cellpadding-x/y`.
-
-## Usage without scripts (maybe remove this section)
-
-Usage without the script is only available when you have
-- max 1 row tall table header
-- max 1 column wide sidebar
-- no merges in header or sidebar
-- no table sections
-- no sticky content in cells
-
-In this case you have to apply `sticky` class to the table element and `aria-colindex`, `aria-rowindex` attributes for each cell manually.
-
-Additionally you might need to set the following to mark the sticky top and left offsets:
-```css
-table.sticky {
-  --stickytables-row-0-top: 0px;
-  --stickytables-column-0-left: 0px;
-}
-```
-
-However, in this case maybe a simple rule like this fits you better:
-```css
-table.sticky>thead>tr:first-child>th { position: sticky; top: 0; }
-table.sticky>tbody>tr>th:first-child { position: sticky; left: 0; }
-```
-
-## Usage with custom init script (maybe remove this section)
-
-You can write your own init script if you wish by the building blocks exported by the package.
-
-```js
-document.addEventListener('load', () => {
-  const table = document.querySelector('table.sticky');
-  // when no `aria-colindex` and `aria-rowindex` on table cells
-  StickyTables.addTableCellAriaRowColIndexes(table);
-  // to add css variables on the table element for multiline table headers
-  StickyTables.addStickyTableCssVariables(table);
-});
-```
 
 ## Docs
 
@@ -180,11 +144,19 @@ You can specify the following options
   Default: `false`
 
 
-- `addScrollSizeY?: boolean;`
+- `addViewportWidthVars?: boolean;`
 
-  Set and manage --scrollbar-size-y css variable, required by sticky-wrapped section cell centering.
+  Set and manage --viewport-width CSS variable on DocumentElement, required by sticky-wrapped section cells.
 
   Default: `false`
+
+
+- `addPaddingVars?: boolean;`
+
+  Set --padding-{top,right,bottom,left} CSS variables on the table element on load, required by sticky-wrapped cells.
+
+  Default: `false`
+
 
 
 - `offsetTop?: number | { (): number };`
@@ -240,8 +212,14 @@ Modify the calculated CSS variables, account for section headers. Only useful wh
 
 Called by init when `stickyWrapSideContent: true` and `stickySections: true | string`.
 
-### `addScollbarSizeY(table: HTMLTableElement): void`
+### `addViewportCssVariables(): void`
 
-Generates the `--scrollbar-size-y` CSS variable. This sets the vertical scrollbar width in pixels. Only useful when `stickyWrapSectionsContent: true` and `stickySections: true | string`.
+Generates the `--viewport-width` CSS variable. This is the same as `100vw - scrollbar width`. Only useful when `stickyWrapSectionsContent: true` and `stickySections: true | string`.
 
-Called by init when `addScrollSizeY: true`.
+Called by init when `addViewportWidthVars: true`.
+
+### `addPaddingCssVaraibles(table: HTMLTableElement): void`
+
+Set `--padding-{top,right,bottom,left}` CSS variables on the table element on load. Required by sticky-wrapped cells. Only useful when `stickyWrapHeadContent: true`, `stickyWrapSideContent: true` or `stickyWrapSectionsContent: true`.
+
+Called by init when `addPaddingVars: true`.
