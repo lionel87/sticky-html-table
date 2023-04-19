@@ -1,4 +1,5 @@
 /node_modules/
-/dist/
+/browser/
+/esm/
 *.log
 *.tgz

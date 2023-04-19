@@ -6,17 +6,18 @@ const args = process.argv.slice(2);
 
 const watch = args.includes('--watch');
 const serve = args.includes('--serve');
-const production = args.includes('--env=production') || process.env.NODE_ENV === 'production';
+// const production = args.includes('--env=production') || process.env.NODE_ENV === 'production';
 
 esbuild[(watch || serve) ? 'context' : 'build']({
 	logLevel: 'info',
 	entryPoints: ['src/sticky-table.ts', 'src/sticky-table.scss'],
 	bundle: true,
 	format: 'iife',
+	globalName: 'StickyTable',
 	splitting: false,
 	treeShaking: true,
-	minify: production,
-	outdir: 'dist',
+	minify: true,
+	outdir: 'browser',
 	sourcemap: false,
 	legalComments: 'eof',
 	target: ['chrome58', 'firefox57', 'safari11', 'edge18'],
@@ -32,6 +33,6 @@ esbuild[(watch || serve) ? 'context' : 'build']({
 	watch && ctx.watch();
 	serve && ctx.serve({
 		port: 80,
-		servedir: 'dist',
+		servedir: '.',
 	});
 });
