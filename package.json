@@ -1,7 +1,7 @@
 {
   "name": "sticky-html-table",
   "description": "Tools to make large HTML table headers and sidebars to stick on the screen when scrolling.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "esm/sticky-table.js",
   "type": "module",
   "author": "László BULIK",
