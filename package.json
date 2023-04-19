@@ -20,8 +20,5 @@
     "esbuild-sass-plugin": "^2.8.0",
     "rimraf": "^5.0.0",
     "typescript": "^5.0.4"
-  },
-  "dependencies": {
-    "swc": "^1.0.11"
   }
 }
