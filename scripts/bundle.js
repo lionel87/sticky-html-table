@@ -20,7 +20,7 @@ esbuild[(watch || serve) ? 'context' : 'build']({
 	outdir: 'browser',
 	sourcemap: false,
 	legalComments: 'eof',
-	target: ['chrome58', 'firefox57', 'safari11', 'edge18'],
+	target: ['chrome56', 'firefox59', 'edge16', 'opera42', 'safari13'],
 	plugins: [
 		sassPlugin({
 			precompile(source, pathname) {
