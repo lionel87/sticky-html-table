@@ -7,7 +7,7 @@
   "author": "László BULIK",
   "license": "MIT",
   "scripts": {
-    "prepack": "npm run build && npm run bundle",
+    "prepack": "npm run clean && npm run build && npm run bundle",
     "start": "node scripts/bundle.js --watch --serve",
     "clean": "rimraf browser esm",
     "build": "tsc",
