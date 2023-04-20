@@ -1,6 +1,6 @@
 $max-head-rows: 10 !default;
 $max-side-columns: 10 !default;
-$z-index-base: 10 !default;
+$z-index-base: 50 !default;
 
 table.sticky {
 	border-spacing: 0px !important;
@@ -20,7 +20,7 @@ table.sticky {
 			>tr>th[aria-colindex="#{$i}"] {
 				position: sticky;
 				left: var(--stickytables-col-#{$i}-left, auto);
-				z-index: $z-index-base + $max-side-columns - $i;
+				z-index: $z-index-base + (3 * $max-side-columns) - $i;
 			}
 		}
 	}
@@ -31,6 +31,7 @@ table.sticky {
 			>tr>th[aria-colindex="#{$i}"] {
 				position: sticky;
 				left: var(--stickytables-col-#{$i}-left, auto);
+				z-index: $z-index-base + $max-side-columns - $i;
 			}
 		}
 
@@ -40,7 +41,11 @@ table.sticky {
 				position: sticky;
 				top: var(--stickytables-top, auto);
 				left: auto;
-				z-index: $z-index-base;
+			}
+			@for $i from 1 through $max-side-columns {
+				>th[aria-colindex="#{$i}"] {
+					z-index: $z-index-base + (2 * $max-side-columns) - $i;
+				}
 			}
 		}
 	}
