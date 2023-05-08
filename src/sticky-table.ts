@@ -46,7 +46,7 @@ export function addStickyTableCssVariables(table: HTMLTableElement, offsetTop = 
 	let c = 0;
 	let el: HTMLTableCellElement | null = null;
 	let topSum = offsetTop;
-	while (el = table.querySelector<HTMLTableCellElement>('table>thead>tr>th[aria-rowindex="' + (++c) + '"]:not([rowspan])')) {
+	while (el = table.querySelector<HTMLTableCellElement>('table>thead>tr>th[aria-rowindex="' + (++c) + '"]:not([rowspan]), table>thead>tr>th[aria-rowindex="' + c + '"][rowspan="1"]')) {
 		table.style.setProperty(`--stickytables-row-${c}-top`, topSum + 'px');
 		// NOTE: el.offsetHeight is rounded to int by browsers
 		topSum += Number.parseFloat(window.getComputedStyle(el)?.height ?? el.offsetHeight);
@@ -56,7 +56,7 @@ export function addStickyTableCssVariables(table: HTMLTableElement, offsetTop = 
 	c = 0;
 	el = null;
 	let leftSum = offsetLeft;
-	while (el = table.querySelector<HTMLTableCellElement>('table>tbody>tr>th[aria-colindex="' + (++c) + '"]:not([colspan])')) {
+	while (el = table.querySelector<HTMLTableCellElement>('table>tbody>tr>th[aria-colindex="' + (++c) + '"]:not([colspan]), table>tbody>tr>th[aria-colindex="' + c + '"][colspan="1"]')) {
 		table.style.setProperty(`--stickytables-col-${c}-left`, leftSum + 'px');
 		// NOTE: el.offsetWidth is rounded to int by browsers
 		leftSum += Number.parseFloat(window.getComputedStyle(el)?.width ?? el.offsetWidth);
@@ -75,7 +75,7 @@ const stickyWrapCell = (cell: HTMLTableCellElement) => {
 
 export function stickyWrapHeadContent(table: HTMLTableElement) {
 	let sideCount = 0;
-	while (table.querySelector<HTMLTableCellElement>('table>thead>tr>th[aria-colindex="' + (sideCount + 1) + '"]:not([colspan])')) {
+	while (table.querySelector<HTMLTableCellElement>('table>thead>tr>th[aria-colindex="' + (sideCount + 1) + '"]:not([colspan]), table>thead>tr>th[aria-colindex="' + (sideCount + 1) + '"][colspan="1"]')) {
 		sideCount++;
 	}
 
